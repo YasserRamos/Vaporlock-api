@@ -1,0 +1,38 @@
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Archivos generados por .NET en todos los proyectos
+**/bin/
+**/obj/
+
+# Resultados de compilación
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rtifacts/
+
+# Archivos de registro y temporales
+*.log
+*.tmp
+*.cache
+
+# Paquetes NuGet generados
+*.nupkg
+*.snupkg
+
+# Configuración local y secretos
+.env
+.env.*
+!.env.example
+secrets.json
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini

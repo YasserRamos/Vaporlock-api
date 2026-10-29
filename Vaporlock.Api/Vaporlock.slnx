@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="../Vaporlock.Application/Vaporlock.Application.csproj" />
+  <Project Path="../Vaporlock.Domain/Vaporlock.Domain.csproj" />
+  <Project Path="../Vaporlock.Infrastructure/Vaporlock.Infrastructure.csproj" />
+  <Project Path="Vaporlock.Api.csproj" />
+</Solution>
