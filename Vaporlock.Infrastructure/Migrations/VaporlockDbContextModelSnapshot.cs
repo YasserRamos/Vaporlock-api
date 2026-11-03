@@ -300,6 +300,10 @@ namespace Vaporlock.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PkPersonaje"));
 
+                    b.Property<string>("Agresividad")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Descripcion")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -320,6 +324,16 @@ namespace Vaporlock.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<int?>("PuntosSalud")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Rol")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Sin clasificar");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(170)
@@ -335,6 +349,75 @@ namespace Vaporlock.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Personajes", (string)null);
+                });
+
+            modelBuilder.Entity("Vaporlock.Domain.Entities.PersonajeAccion", b =>
+                {
+                    b.Property<int>("PkPersonajeAccion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PkPersonajeAccion"));
+
+                    b.Property<int>("FkPersonaje")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("PkPersonajeAccion");
+
+                    b.HasIndex("FkPersonaje");
+
+                    b.ToTable("PersonajesAcciones", (string)null);
+                });
+
+            modelBuilder.Entity("Vaporlock.Domain.Entities.PersonajeAparicion", b =>
+                {
+                    b.Property<int>("PkPersonajeAparicion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PkPersonajeAparicion"));
+
+                    b.Property<int>("FkPersonaje")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("PkPersonajeAparicion");
+
+                    b.HasIndex("FkPersonaje");
+
+                    b.ToTable("PersonajesApariciones", (string)null);
+                });
+
+            modelBuilder.Entity("Vaporlock.Domain.Entities.PersonajeHabilidad", b =>
+                {
+                    b.Property<int>("PkPersonajeHabilidad")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PkPersonajeHabilidad"));
+
+                    b.Property<int>("FkPersonaje")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("PkPersonajeHabilidad");
+
+                    b.HasIndex("FkPersonaje");
+
+                    b.ToTable("PersonajesHabilidades", (string)null);
                 });
 
             modelBuilder.Entity("Vaporlock.Domain.Entities.Historia", b =>
@@ -398,9 +481,51 @@ namespace Vaporlock.Infrastructure.Migrations
                     b.Navigation("MediaPortada");
                 });
 
+            modelBuilder.Entity("Vaporlock.Domain.Entities.PersonajeAccion", b =>
+                {
+                    b.HasOne("Vaporlock.Domain.Entities.Personaje", "Personaje")
+                        .WithMany("Acciones")
+                        .HasForeignKey("FkPersonaje")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Personaje");
+                });
+
+            modelBuilder.Entity("Vaporlock.Domain.Entities.PersonajeAparicion", b =>
+                {
+                    b.HasOne("Vaporlock.Domain.Entities.Personaje", "Personaje")
+                        .WithMany("Apariciones")
+                        .HasForeignKey("FkPersonaje")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Personaje");
+                });
+
+            modelBuilder.Entity("Vaporlock.Domain.Entities.PersonajeHabilidad", b =>
+                {
+                    b.HasOne("Vaporlock.Domain.Entities.Personaje", "Personaje")
+                        .WithMany("Habilidades")
+                        .HasForeignKey("FkPersonaje")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Personaje");
+                });
+
             modelBuilder.Entity("Vaporlock.Domain.Entities.CategoriaMedia", b =>
                 {
                     b.Navigation("Medias");
+                });
+
+            modelBuilder.Entity("Vaporlock.Domain.Entities.Personaje", b =>
+                {
+                    b.Navigation("Acciones");
+
+                    b.Navigation("Apariciones");
+
+                    b.Navigation("Habilidades");
                 });
 #pragma warning restore 612, 618
         }

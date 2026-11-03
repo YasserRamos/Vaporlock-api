@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿
+using Dapper;
 using Vaporlock.Application.DTOs.Media;
 using Vaporlock.Application.Interfaces.Repositories;
 using Vaporlock.Infrastructure.Data;
@@ -18,20 +19,22 @@ public class MediaRepository : IMediaRepository
     {
         const string sql = """
             SELECT
-                PkMedia,
-                NombreArchivo,
-                ContentType,
-                TextoAlternativo,
-                FechaCreacion
-            FROM dbo.Media
-            ORDER BY PkMedia DESC;
+                M.PkMedia,
+                M.FkCategoriaMedia,
+                C.Nombre AS Categoria,
+                M.NombreArchivo,
+                M.ContentType,
+                M.TextoAlternativo,
+                M.FechaCreacion
+            FROM dbo.Media M
+            INNER JOIN dbo.CategoriasMedia C
+                ON C.PkCategoriaMedia = M.FkCategoriaMedia
+            ORDER BY M.PkMedia DESC;
             """;
 
         using var connection = _connectionFactory.CreateConnection();
 
-        var resultado = await connection.QueryAsync<MediaDto>(sql);
-
-        return resultado;
+        return await connection.QueryAsync<MediaDto>(sql);
     }
 
     public async Task<MediaContenidoDto?> ObtenerPorIdAsync(int id)

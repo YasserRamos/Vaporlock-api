@@ -20,6 +20,15 @@ public class VaporlockDbContext : DbContext
     public DbSet<Historia> Historias => Set<Historia>();
     public DbSet<MiembroEquipo> MiembrosEquipo => Set<MiembroEquipo>();
 
+    public DbSet<PersonajeAparicion> PersonajesApariciones =>
+        Set<PersonajeAparicion>();
+
+    public DbSet<PersonajeAccion> PersonajesAcciones =>
+        Set<PersonajeAccion>();
+
+    public DbSet<PersonajeHabilidad> PersonajesHabilidades =>
+        Set<PersonajeHabilidad>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -135,6 +144,16 @@ public class VaporlockDbContext : DbContext
             entity.Property(x => x.Descripcion)
                 .HasMaxLength(1000);
 
+            entity.Property(x => x.Rol)
+                .HasMaxLength(50)
+                .HasDefaultValue("Sin clasificar")
+                .IsRequired();
+
+            entity.Property(x => x.PuntosSalud);
+
+            entity.Property(x => x.Agresividad)
+                .HasMaxLength(50);
+
             entity.Property(x => x.Publicado)
                 .HasDefaultValue(false);
 
@@ -147,6 +166,63 @@ public class VaporlockDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(x => x.FkMediaPortada)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // PersonajesApariciones
+        modelBuilder.Entity<PersonajeAparicion>(entity =>
+        {
+            entity.ToTable("PersonajesApariciones");
+
+            entity.HasKey(x => x.PkPersonajeAparicion);
+
+            entity.Property(x => x.Nombre)
+                .HasMaxLength(150)
+                .IsRequired();
+
+            entity.HasOne(x => x.Personaje)
+                .WithMany(x => x.Apariciones)
+                .HasForeignKey(x => x.FkPersonaje)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => x.FkPersonaje);
+        });
+
+        // PersonajesAcciones
+        modelBuilder.Entity<PersonajeAccion>(entity =>
+        {
+            entity.ToTable("PersonajesAcciones");
+
+            entity.HasKey(x => x.PkPersonajeAccion);
+
+            entity.Property(x => x.Nombre)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.HasOne(x => x.Personaje)
+                .WithMany(x => x.Acciones)
+                .HasForeignKey(x => x.FkPersonaje)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => x.FkPersonaje);
+        });
+
+        // PersonajesHabilidades
+        modelBuilder.Entity<PersonajeHabilidad>(entity =>
+        {
+            entity.ToTable("PersonajesHabilidades");
+
+            entity.HasKey(x => x.PkPersonajeHabilidad);
+
+            entity.Property(x => x.Nombre)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.HasOne(x => x.Personaje)
+                .WithMany(x => x.Habilidades)
+                .HasForeignKey(x => x.FkPersonaje)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => x.FkPersonaje);
         });
 
         // Niveles
