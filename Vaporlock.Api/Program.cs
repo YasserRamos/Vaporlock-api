@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Vaporlock.Infrastructure.Data;
 using Vaporlock.Application.Services;
@@ -81,6 +80,7 @@ app.UseHttpsRedirection();
 // Permitir solicitudes desde React
 app.UseCors("ReactFrontend");
 
+// Registrar controladores
 app.MapControllers();
 
 app.Run();
