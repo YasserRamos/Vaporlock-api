@@ -1,38 +1,79 @@
 
-# Visual Studio
+# ==========================================
+# VISUAL STUDIO
+# ==========================================
 .vs/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
+*.rsuser
+*.sdf
+*.opensdf
 
-# Archivos generados por .NET en todos los proyectos
+# ==========================================
+# .NET - ARCHIVOS GENERADOS
+# ==========================================
 **/bin/
 **/obj/
+**/Debug/
+**/Release/
+**/x64/
+**/x86/
+**/AnyCPU/
+**/artifacts/
+**/TestResults/
 
-# Resultados de compilación
-[Dd]ebug/
-[Rr]elease/
-x64/
-x86/
-[Aa]rtifacts/
-
-# Archivos de registro y temporales
+# ==========================================
+# TEMPORALES Y REGISTROS
+# ==========================================
 *.log
 *.tmp
 *.cache
+*.bak
 
-# Paquetes NuGet generados
+# ==========================================
+# NUGET
+# ==========================================
 *.nupkg
 *.snupkg
 
-# Configuración local y secretos
+# ==========================================
+# CONFIGURACIÓN LOCAL Y SECRETOS
+# ==========================================
 .env
 .env.*
 !.env.example
 secrets.json
+appsettings.Development.json
+appsettings.Local.json
 
-# Archivos del sistema operativo
+# ==========================================
+# CERTIFICADOS Y CLAVES PRIVADAS
+# ==========================================
+*.pfx
+*.p12
+*.key
+
+# ==========================================
+# SISTEMA OPERATIVO
+# ==========================================
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# ==========================================
+# FRONTEND - DEPENDENCIAS Y COMPILACIÓN
+# ==========================================
+**/node_modules/
+**/dist/
+**/.vite/
+**/coverage/
+
+# ==========================================
+# EDITORES
+# ==========================================
+.idea/
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
