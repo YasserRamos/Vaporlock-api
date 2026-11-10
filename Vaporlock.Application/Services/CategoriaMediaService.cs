@@ -22,4 +22,27 @@ public class CategoriaMediaService : ICategoriaMediaService
     {
         return _repository.ObtenerPorIdAsync(id);
     }
+
+    public Task<int> CrearAsync(CrearCategoriaMediaDto dto)
+    {
+        dto.Nombre = dto.Nombre.Trim();
+        return _repository.CrearAsync(dto);
+    }
+
+    public Task<bool> ActualizarAsync(int id, ActualizarCategoriaMediaDto dto)
+    {
+        dto.Nombre = dto.Nombre.Trim();
+        return _repository.ActualizarAsync(id, dto);
+    }
+
+    public Task<bool> ActualizarParcialAsync(
+        int id, ActualizarCategoriaMediaParcialDto dto)
+    {
+        return _repository.ActualizarParcialAsync(id, dto);
+    }
+
+    public Task<bool> EliminarAsync(int id)
+    {
+        return _repository.EliminarAsync(id);
+    }
 }

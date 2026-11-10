@@ -1,5 +1,4 @@
-﻿
-using Dapper;
+﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Vaporlock.Infrastructure.Data;
@@ -28,13 +27,19 @@ public class HealthController : ControllerBase
     }
 
     [HttpGet("database")]
-    public async Task<IActionResult> CheckDatabase()
+    public async Task<IActionResult> CheckDatabase(
+        CancellationToken cancellationToken)
     {
         try
         {
             using var connection = _connectionFactory.CreateConnection();
 
-            await connection.ExecuteScalarAsync<int>("SELECT 1");
+            await connection.ExecuteScalarAsync<int>(
+                new CommandDefinition(
+                    "SELECT 1",
+                    cancellationToken: cancellationToken
+                )
+            );
 
             return Ok(new
             {
@@ -48,6 +53,7 @@ public class HealthController : ControllerBase
             return StatusCode(503, new
             {
                 status = "error",
+                database = "disconnected",
                 message = "No se pudo conectar con la base de datos."
             });
         }
@@ -56,7 +62,17 @@ public class HealthController : ControllerBase
             return StatusCode(503, new
             {
                 status = "error",
+                database = "disconnected",
                 message = "La conexión a la base de datos no está configurada correctamente."
+            });
+        }
+        catch (TimeoutException)
+        {
+            return StatusCode(503, new
+            {
+                status = "error",
+                database = "disconnected",
+                message = "La conexión con la base de datos excedió el tiempo de espera."
             });
         }
     }

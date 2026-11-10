@@ -4,6 +4,17 @@ namespace Vaporlock.Application.Interfaces.Repositories;
 
 public interface INoticiasRepository
 {
+    // Consultas públicas
     Task<IEnumerable<NoticiaDto>> ObtenerPublicadasAsync();
     Task<NoticiaDto?> ObtenerPorSlugAsync(string slug);
+
+    // Consultas administrativas
+    Task<IEnumerable<NoticiaDto>> ObtenerTodasAsync();
+    Task<NoticiaDto?> ObtenerPorIdAsync(int id);
+
+    // Operaciones CRUD
+    Task<int> CrearAsync(CrearNoticiaDto dto);
+    Task<bool> ActualizarAsync(int id, ActualizarNoticiaDto dto);
+    Task<bool> ActualizarParcialAsync(int id, ActualizarNoticiaParcialDto dto);
+    Task<bool> EliminarAsync(int id);
 }

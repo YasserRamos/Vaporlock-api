@@ -1,4 +1,6 @@
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Diagnostics;
 using Vaporlock.Infrastructure.Data;
 using Vaporlock.Application.Services;
 using Vaporlock.Infrastructure.Repositories;
@@ -7,12 +9,12 @@ using Vaporlock.Application.Interfaces.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Controladores y documentación de la API
+// CONTROLADORES Y DOCUMENTACIÓN
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
-// CORS para el frontend React con Vite
+// CORS PARA REACT
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactFrontend", policy =>
@@ -27,10 +29,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Conexión para Dapper
+// CONEXIÓN DAPPER
 builder.Services.AddSingleton<SqlConnectionFactory>();
 
-// Conexión para Entity Framework Core
+// CONEXIÓN ENTITY FRAMEWORK CORE
 builder.Services.AddDbContext<VaporlockDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("Vaporlock")
@@ -40,37 +42,102 @@ builder.Services.AddDbContext<VaporlockDbContext>(options =>
     )
 );
 
-// Módulo Media
+// MÓDULO MEDIA
 builder.Services.AddScoped<IMediaRepository, MediaRepository>();
 builder.Services.AddScoped<IMediaService, MediaService>();
 
-// Módulo Categorías de Media
+// MÓDULO CATEGORÍAS DE MEDIA
 builder.Services.AddScoped<ICategoriaMediaRepository, CategoriaMediaRepository>();
 builder.Services.AddScoped<ICategoriaMediaService, CategoriaMediaService>();
 
-// Módulo Noticias
+// MÓDULO NOTICIAS
 builder.Services.AddScoped<INoticiasRepository, NoticiasRepository>();
 builder.Services.AddScoped<INoticiasService, NoticiasService>();
 
-// Módulo Personajes
+// MÓDULO PERSONAJES
 builder.Services.AddScoped<IPersonajesRepository, PersonajesRepository>();
 builder.Services.AddScoped<IPersonajesService, PersonajesService>();
 
-// Módulo Niveles
+// MÓDULO NIVELES
 builder.Services.AddScoped<INivelesRepository, NivelesRepository>();
 builder.Services.AddScoped<INivelesService, NivelesService>();
 
-// Módulo Historia
+// MÓDULO HISTORIAS
 builder.Services.AddScoped<IHistoriasRepository, HistoriasRepository>();
 builder.Services.AddScoped<IHistoriasService, HistoriasService>();
 
-// Módulo Miembros del equipo
+// MÓDULO MIEMBROS DEL EQUIPO
 builder.Services.AddScoped<IMiembrosEquipoRepository, MiembrosEquipoRepository>();
 builder.Services.AddScoped<IMiembrosEquipoService, MiembrosEquipoService>();
 
 var app = builder.Build();
 
-// Swagger solo en desarrollo
+// HTTPS
+app.UseHttpsRedirection();
+
+// CORS
+app.UseCors("ReactFrontend");
+
+// MANEJO GLOBAL DE EXCEPCIONES
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.Clear();
+        context.Response.ContentType = "application/json";
+
+        var exceptionFeature = context.Features
+            .Get<IExceptionHandlerFeature>();
+
+        var exception = exceptionFeature?.Error;
+
+        var logger = context.RequestServices
+            .GetRequiredService<ILogger<Program>>();
+
+        switch (exception)
+        {
+            case ArgumentException:
+                context.Response.StatusCode =
+                    StatusCodes.Status400BadRequest;
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    status = 400,
+                    mensaje = exception.Message
+                });
+                break;
+
+            case KeyNotFoundException:
+                context.Response.StatusCode =
+                    StatusCodes.Status404NotFound;
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    status = 404,
+                    mensaje = exception.Message
+                });
+                break;
+
+            default:
+                logger.LogError(
+                    exception,
+                    "Error no controlado durante la petición HTTP."
+                );
+
+                context.Response.StatusCode =
+                    StatusCodes.Status500InternalServerError;
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    status = 500,
+                    mensaje = "Ocurrió un error interno en el servidor."
+                });
+                break;
+        }
+    });
+});
+
+// SWAGGER SOLO EN DESARROLLO
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -78,12 +145,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-// Permitir solicitudes desde React
-app.UseCors("ReactFrontend");
-
-// Registrar controladores
+// CONTROLADORES
 app.MapControllers();
 
 app.Run();
