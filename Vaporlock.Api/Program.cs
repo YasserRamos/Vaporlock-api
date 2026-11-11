@@ -22,7 +22,9 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "https://vaporlock-pwa.onrender.com",
-                "http://localhost:5173"
+                "http://localhost:5173",
+                "http://localhost:8081"
+
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
