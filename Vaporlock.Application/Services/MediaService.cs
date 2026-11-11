@@ -13,13 +13,27 @@ public class MediaService : IMediaService
         _mediaRepository = mediaRepository;
     }
 
-    public Task<IEnumerable<MediaDto>> ObtenerTodosAsync()
+    public async Task<IEnumerable<MediaDto>> ObtenerTodosAsync()
     {
-        return _mediaRepository.ObtenerTodosAsync();
+        return await _mediaRepository.ObtenerTodosAsync();
     }
 
-    public Task<MediaContenidoDto?> ObtenerPorIdAsync(int id)
+    public async Task<MediaContenidoDto?> ObtenerPorIdAsync(int id)
     {
-        return _mediaRepository.ObtenerPorIdAsync(id);
+        return await _mediaRepository.ObtenerPorIdAsync(id);
+    }
+
+    public async Task<int> CrearAsync(
+        string nombreArchivo,
+        string contentType,
+        byte[] datos,
+        string? textoAlternativo)
+    {
+        return await _mediaRepository.CrearAsync(
+            nombreArchivo,
+            contentType,
+            datos,
+            textoAlternativo
+        );
     }
 }
